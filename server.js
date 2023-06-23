@@ -26,17 +26,17 @@ app.use(bodyParser.json())
 io.on('connection', (socket) => {
     console.log('a user connected', socket.id);
   
-    userRoutes(app);
-    authRoutes(app);
-    messageRoutes(app, io);
-    notificationRoutes(app, io);
-    
     socket.on('disconnect', () => {
       console.log('user disconnected'+  socket.id);
     });
   
 });
-  
+
+// Routes
+userRoutes(app);
+authRoutes(app);
+messageRoutes(app, io);
+notificationRoutes(app, io);
 
 
 
