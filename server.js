@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
     userRoutes(app);
     authRoutes(app);
     messageRoutes(app, io);
-    notificationRoutes(app);
+    notificationRoutes(app, io);
     
     socket.on('disconnect', () => {
       console.log('user disconnected'+  socket.id);
