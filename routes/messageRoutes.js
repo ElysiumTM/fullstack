@@ -5,24 +5,38 @@ const withAuth = require('../withAuth')
 
 function messageRoutes(app, io){
     app.post('/message/add', withAuth, async (req, res)=>{
-        const data = {
-            senderUserId: req.body.senderUserId,
-            receiverUserId:  req.body.receiverUserId,
+        const messageData = {
+            senderUserId : req.body.senderUserId,
+            receiverUserId: req.body.receiverUserId,
             body: req.body.body,
             creationDateTime: new Date(),
             lastUpdateDateTime: new Date()
         }
 
-        const message = new Message(data);
+        const notificationData = {
+            senderUserId: req.body.senderUserId,
+            receiverUserId: req.body.receiverUserId,
+            message: 'you have one new message',
+            creationDateTime: new Date()
+        }
+
+        const message = new Message(messageData);
+        const notification = new Notification(notificationData);
+
         const result = await message.save();
-        console.log(result)
-        if(result.code) {
+        
+
+        if(result.code){
             res.status(result.code).json({result})
             return;
         }
+        
+        const  resultNotification = await notification.save();
+        console.log(resultNotification);
         io.emit('newMessage', {receiverUserId: req.body.receiverUserId})
-        res.status(200).json({result})
+        io.emit('newNotification', {receiverUserId: req.body.receiverUserId})
 
+        res.status(200).json({result, resultNotification})
     })
 
     app.get('/message/all', withAuth,async (req, res)=>{
